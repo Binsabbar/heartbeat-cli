@@ -47,10 +47,20 @@ hrm calibrate                # sit still ~2 min to learn your resting HR
 hrm monitor                  # live dashboard (default)
 hrm monitor --print          # stream readings to stdout (debug, no TUI)
 hrm report                   # summarise today; --date YYYY-MM-DD for another day
+hrm reset                    # delete recorded data (--all also clears config; -f skips prompt)
 ```
 
-In the dashboard: **`t`** tag the current moment (e.g. `standup`, `JIRA-123`), **`s`**
-start/stop a named session, **`q`** quit.
+In the dashboard:
+- **`t`** open a tag. A small form captures **kind** (meeting / focus / break / interrupt),
+  **title**, optional **person**, and optional **note** (Tab/Enter moves between fields, Esc
+  cancels). The tag stays *open* as an interval.
+- **`e`** close an open tag, recording its end time and duration. If several are open, press
+  the listed number to pick one. A tag you never close stays a point marker.
+- **`q`** quit.
+
+`hrm report` pairs each tag with its close to show durations (e.g.
+`09:30–10:02 (32m) [meeting] Sprint planning · Sarah · JIRA-451`), so you can line meetings
+up against your stress timeline.
 
 Global flags: `--data-dir`, `--device`, `--resting-hr`, `--max-hr`.
 

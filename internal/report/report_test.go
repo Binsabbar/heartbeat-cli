@@ -36,7 +36,7 @@ func (s *ReportSuite) TestBuildAggregates() {
 			{Time: s.day.Add(20 * time.Second), BPM: 90, Stress: 30, Zone: model.ZoneMild},
 		},
 		events: []model.Event{
-			{Time: s.day.Add(5 * time.Second), Type: model.EventTag, Label: "standup"},
+			{Time: s.day.Add(5 * time.Second), Type: model.EventTag, ID: "a", Kind: "meeting", Label: "standup", Person: "Sarah"},
 			{Time: s.day.Add(12 * time.Second), Type: model.EventStressChange, From: model.ZoneCalm, To: model.ZoneElevated},
 		},
 	}
@@ -48,11 +48,35 @@ func (s *ReportSuite) TestBuildAggregates() {
 	s.Equal(120, rep.MaxBPM)
 	s.InDelta(90.0, rep.AvgBPM, 0.01)
 	s.InDelta(60.0, rep.MaxStress, 0.01)
-	s.Len(rep.Tags, 1)
+	s.Require().Len(rep.Tags, 1)
+	s.Equal("standup", rep.Tags[0].Title)
+	s.Equal("Sarah", rep.Tags[0].Person)
 	s.Len(rep.Changes, 1)
 	// First two gaps are 10s each, attributed to calm then elevated.
 	s.Equal(10*time.Second, rep.TimeInZone[model.ZoneCalm])
 	s.Equal(10*time.Second, rep.TimeInZone[model.ZoneElevated])
+}
+
+func (s *ReportSuite) TestTagIntervalPairing() {
+	r := fakeReader{
+		samples: []model.Sample{{Time: s.day, BPM: 70, Zone: model.ZoneCalm}},
+		events: []model.Event{
+			{Time: s.day, Type: model.EventTag, ID: "m1", Kind: "meeting", Label: "Sprint planning"},
+			{Time: s.day.Add(30 * time.Minute), Type: model.EventTagEnd, ID: "m1"},
+			{Time: s.day.Add(time.Hour), Type: model.EventTag, ID: "m2", Kind: "focus", Label: "deep work"},
+		},
+	}
+	rep, err := report.Build(r, s.day)
+	s.Require().NoError(err)
+	s.Require().Len(rep.Tags, 2)
+
+	d, closed := rep.Tags[0].Duration()
+	s.True(closed)
+	s.Equal(30*time.Minute, d)
+
+	_, openClosed := rep.Tags[1].Duration()
+	s.False(openClosed, "unclosed tag stays open")
+	s.Contains(rep.String(), "(open)")
 }
 
 func (s *ReportSuite) TestBuildEmpty() {

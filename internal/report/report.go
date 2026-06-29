@@ -19,6 +19,25 @@ type SampleReader interface {
 	ReadEvents(t time.Time) ([]model.Event, error)
 }
 
+// Tagged is a manual tag resolved into an interval (open tags have no End).
+type Tagged struct {
+	ID     string
+	Kind   string
+	Title  string
+	Person string
+	Note   string
+	Start  time.Time
+	End    *time.Time
+}
+
+// Duration returns the interval length and whether it is closed.
+func (t Tagged) Duration() (time.Duration, bool) {
+	if t.End == nil {
+		return 0, false
+	}
+	return t.End.Sub(t.Start), true
+}
+
 // Report is the computed summary for a single day.
 type Report struct {
 	Date        time.Time
@@ -30,8 +49,7 @@ type Report struct {
 	MaxStress   float64
 	TimeInZone  map[model.Zone]time.Duration
 	Changes     []model.Event
-	Tags        []model.Event
-	Sessions    []model.Event
+	Tags        []Tagged
 }
 
 // Build loads and summarises the given day.
@@ -74,17 +92,36 @@ func Build(r SampleReader, day time.Time) (Report, error) {
 		rep.AvgStress = sumStress / float64(len(samples))
 	}
 
+	rep.Tags = pairTags(events)
 	for _, ev := range events {
-		switch ev.Type {
-		case model.EventStressChange:
+		if ev.Type == model.EventStressChange {
 			rep.Changes = append(rep.Changes, ev)
-		case model.EventTag:
-			rep.Tags = append(rep.Tags, ev)
-		case model.EventSessionStart, model.EventSessionEnd:
-			rep.Sessions = append(rep.Sessions, ev)
 		}
 	}
 	return rep, nil
+}
+
+// pairTags resolves open/close tag events into intervals, matched by ID. Tags
+// without a matching end remain open (End == nil).
+func pairTags(events []model.Event) []Tagged {
+	var tags []Tagged
+	idx := map[string]int{}
+	for _, ev := range events {
+		switch ev.Type {
+		case model.EventTag:
+			idx[ev.ID] = len(tags)
+			tags = append(tags, Tagged{
+				ID: ev.ID, Kind: ev.Kind, Title: ev.Label,
+				Person: ev.Person, Note: ev.Note, Start: ev.Time,
+			})
+		case model.EventTagEnd:
+			if i, ok := idx[ev.ID]; ok {
+				end := ev.Time
+				tags[i].End = &end
+			}
+		}
+	}
+	return tags
 }
 
 // String renders the report as a plain-text terminal summary.
@@ -112,17 +149,29 @@ func (r Report) String() string {
 		}
 	}
 
-	tags := append([]model.Event(nil), r.Tags...)
-	tags = append(tags, r.Sessions...)
-	if len(tags) > 0 {
-		sort.Slice(tags, func(i, j int) bool { return tags[i].Time.Before(tags[j].Time) })
-		b.WriteString("\nTags & sessions:\n")
-		for _, ev := range tags {
-			label := ev.Label
-			if ev.Note != "" {
-				label += " — " + ev.Note
+	if len(r.Tags) > 0 {
+		tags := append([]Tagged(nil), r.Tags...)
+		sort.Slice(tags, func(i, j int) bool { return tags[i].Start.Before(tags[j].Start) })
+		b.WriteString("\nTags & meetings:\n")
+		for _, t := range tags {
+			when := t.Start.Format("15:04:05")
+			if d, ok := t.Duration(); ok {
+				when += fmt.Sprintf("–%s (%s)", t.End.Format("15:04:05"), fmtDur(d))
+			} else {
+				when += " (open)"
 			}
-			fmt.Fprintf(&b, "  %s  [%s] %s\n", ev.Time.Format("15:04:05"), ev.Type, label)
+			kind := t.Kind
+			if kind == "" {
+				kind = "tag"
+			}
+			line := fmt.Sprintf("  %s  [%s] %s", when, kind, t.Title)
+			if t.Person != "" {
+				line += " · " + t.Person
+			}
+			if t.Note != "" {
+				line += " · " + t.Note
+			}
+			b.WriteString(line + "\n")
 		}
 	}
 	return b.String()
