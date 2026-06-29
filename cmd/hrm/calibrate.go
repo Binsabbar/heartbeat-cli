@@ -6,8 +6,8 @@ import (
 	"sort"
 	"time"
 
-	"github.com/binsabbar/heartrate-monitor/internal/ble"
-	"github.com/binsabbar/heartrate-monitor/internal/config"
+	"github.com/binsabbar/heartbeat-cli/internal/ble"
+	"github.com/binsabbar/heartbeat-cli/internal/config"
 	"github.com/spf13/cobra"
 )
 

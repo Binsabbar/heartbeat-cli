@@ -13,7 +13,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/binsabbar/heartrate-monitor/internal/model"
+	"github.com/binsabbar/heartbeat-cli/internal/model"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"

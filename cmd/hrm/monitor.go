@@ -8,12 +8,12 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/binsabbar/heartrate-monitor/internal/ble"
-	"github.com/binsabbar/heartrate-monitor/internal/config"
-	"github.com/binsabbar/heartrate-monitor/internal/model"
-	"github.com/binsabbar/heartrate-monitor/internal/store"
-	"github.com/binsabbar/heartrate-monitor/internal/stress"
-	"github.com/binsabbar/heartrate-monitor/internal/tui"
+	"github.com/binsabbar/heartbeat-cli/internal/ble"
+	"github.com/binsabbar/heartbeat-cli/internal/config"
+	"github.com/binsabbar/heartbeat-cli/internal/model"
+	"github.com/binsabbar/heartbeat-cli/internal/store"
+	"github.com/binsabbar/heartbeat-cli/internal/stress"
+	"github.com/binsabbar/heartbeat-cli/internal/tui"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/spf13/cobra"
 )

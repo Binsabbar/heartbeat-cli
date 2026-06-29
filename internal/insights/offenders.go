@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/binsabbar/heartrate-monitor/internal/model"
-	"github.com/binsabbar/heartrate-monitor/internal/report"
+	"github.com/binsabbar/heartbeat-cli/internal/model"
+	"github.com/binsabbar/heartbeat-cli/internal/report"
 )
 
 // Source supplies the recorded data the analysis reads.

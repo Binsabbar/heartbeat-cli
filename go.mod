@@ -1,4 +1,4 @@
-module github.com/binsabbar/heartrate-monitor
+module github.com/binsabbar/heartbeat-cli
 
 go 1.25
 

@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/binsabbar/heartrate-monitor/internal/heartrate"
+	"github.com/binsabbar/heartbeat-cli/internal/heartrate"
 	"tinygo.org/x/bluetooth"
 )
 

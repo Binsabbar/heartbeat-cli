@@ -3,7 +3,7 @@ package heartrate_test
 import (
 	"testing"
 
-	"github.com/binsabbar/heartrate-monitor/internal/heartrate"
+	"github.com/binsabbar/heartbeat-cli/internal/heartrate"
 	"github.com/stretchr/testify/suite"
 )
 

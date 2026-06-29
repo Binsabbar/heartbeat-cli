@@ -6,7 +6,7 @@ import (
 	"text/tabwriter"
 	"time"
 
-	"github.com/binsabbar/heartrate-monitor/internal/insights"
+	"github.com/binsabbar/heartbeat-cli/internal/insights"
 	"github.com/spf13/cobra"
 )
 

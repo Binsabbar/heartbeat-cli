@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/binsabbar/heartrate-monitor/internal/report"
+	"github.com/binsabbar/heartbeat-cli/internal/report"
 	"github.com/spf13/cobra"
 )
 

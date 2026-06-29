@@ -4,9 +4,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/binsabbar/heartrate-monitor/internal/config"
-	"github.com/binsabbar/heartrate-monitor/internal/model"
-	"github.com/binsabbar/heartrate-monitor/internal/stress"
+	"github.com/binsabbar/heartbeat-cli/internal/config"
+	"github.com/binsabbar/heartbeat-cli/internal/model"
+	"github.com/binsabbar/heartbeat-cli/internal/stress"
 	"github.com/stretchr/testify/suite"
 )
 

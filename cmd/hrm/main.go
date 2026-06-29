@@ -11,8 +11,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/binsabbar/heartrate-monitor/internal/config"
-	"github.com/binsabbar/heartrate-monitor/internal/store"
+	"github.com/binsabbar/heartbeat-cli/internal/config"
+	"github.com/binsabbar/heartbeat-cli/internal/store"
 	"github.com/spf13/cobra"
 )
 

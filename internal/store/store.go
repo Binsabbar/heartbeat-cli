@@ -15,7 +15,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/binsabbar/heartrate-monitor/internal/model"
+	"github.com/binsabbar/heartbeat-cli/internal/model"
 )
 
 // Store appends and reads samples/events under a data directory. It is safe for

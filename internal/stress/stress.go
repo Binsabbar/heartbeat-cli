@@ -16,8 +16,8 @@ package stress
 import (
 	"time"
 
-	"github.com/binsabbar/heartrate-monitor/internal/config"
-	"github.com/binsabbar/heartrate-monitor/internal/model"
+	"github.com/binsabbar/heartbeat-cli/internal/config"
+	"github.com/binsabbar/heartbeat-cli/internal/model"
 )
 
 // Engine is a stateful stress calculator. It is not safe for concurrent use; the

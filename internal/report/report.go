@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/binsabbar/heartrate-monitor/internal/model"
+	"github.com/binsabbar/heartbeat-cli/internal/model"
 )
 
 // SampleReader is the subset of store.Store the report needs.
