@@ -45,7 +45,8 @@ func newRootCmd() *cobra.Command {
 	pf.IntVar(&g.maxHR, "max-hr", 0, "override maximum heart rate (bpm)")
 	pf.StringVar(&g.device, "device", "", "BLE device id or name substring to connect to")
 
-	root.AddCommand(newMonitorCmd(g), newDevicesCmd(g), newCalibrateCmd(g), newReportCmd(g), newResetCmd(g))
+	root.AddCommand(newMonitorCmd(g), newDevicesCmd(g), newCalibrateCmd(g),
+		newReportCmd(g), newResetCmd(g), newOffendersCmd(g))
 	return root
 }
 

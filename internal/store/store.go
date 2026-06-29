@@ -123,6 +123,11 @@ func (s *Store) ReadSamples(t time.Time) ([]model.Sample, error) {
 	return readJSONL[model.Sample](s.samplePath(t))
 }
 
+// ReadAllEvents returns every event across all dates (events share one file).
+func (s *Store) ReadAllEvents() ([]model.Event, error) {
+	return readJSONL[model.Event](s.eventsPath())
+}
+
 // ReadEvents returns all events whose local date matches that of t.
 func (s *Store) ReadEvents(t time.Time) ([]model.Event, error) {
 	all, err := readJSONL[model.Event](s.eventsPath())

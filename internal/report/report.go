@@ -92,7 +92,7 @@ func Build(r SampleReader, day time.Time) (Report, error) {
 		rep.AvgStress = sumStress / float64(len(samples))
 	}
 
-	rep.Tags = pairTags(events)
+	rep.Tags = PairTags(events)
 	for _, ev := range events {
 		if ev.Type == model.EventStressChange {
 			rep.Changes = append(rep.Changes, ev)
@@ -101,9 +101,9 @@ func Build(r SampleReader, day time.Time) (Report, error) {
 	return rep, nil
 }
 
-// pairTags resolves open/close tag events into intervals, matched by ID. Tags
+// PairTags resolves open/close tag events into intervals, matched by ID. Tags
 // without a matching end remain open (End == nil).
-func pairTags(events []model.Event) []Tagged {
+func PairTags(events []model.Event) []Tagged {
 	var tags []Tagged
 	idx := map[string]int{}
 	for _, ev := range events {

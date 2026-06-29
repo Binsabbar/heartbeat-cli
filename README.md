@@ -47,8 +47,32 @@ hrm calibrate                # sit still ~2 min to learn your resting HR
 hrm monitor                  # live dashboard (default)
 hrm monitor --print          # stream readings to stdout (debug, no TUI)
 hrm report                   # summarise today; --date YYYY-MM-DD for another day
+hrm offenders                # rank people whose meetings raise your HR/stress
 hrm reset                    # delete recorded data (--all also clears config; -f skips prompt)
 ```
+
+### Finding your triggers — `hrm offenders`
+
+Ranks the people whose tagged meetings coincide with your highest heart rate and stress,
+attributing each meeting to every person listed on it:
+
+```bash
+hrm offenders                       # by avg stress, all time
+hrm offenders --by delta            # by stress elevation vs your daily baseline
+hrm offenders --by hr               # by avg heart rate
+hrm offenders --days 30 --limit 10  # last 30 days, top 10
+hrm offenders --kind focus          # analyse a different tag kind
+```
+
+```
+#  PERSON  MEETINGS  TIME   AVG HR  AVG STRESS  PEAK  Δ VS DAY
+1  Sarah   3         1h30m  109     64          82    +14
+2  Lena    1         30m    95      40          40    -19
+```
+
+`Δ VS DAY` is how far a person's meetings sit above your average stress that day — a better
+"this person specifically winds me up" signal than raw average (which can just reflect a busy
+day). Only **closed** meetings with a named person are counted. Aliases: `triggers`, `people`.
 
 In the dashboard:
 - **`t`** open a tag. A small form captures **kind** (meeting / focus / break / interrupt),
