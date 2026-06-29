@@ -70,9 +70,9 @@ hrm offenders --kind focus          # analyse a different tag kind
 ```
 
 ```
-#  PERSON  MEETINGS  TIME   AVG HR  AVG STRESS  PEAK  Δ VS DAY
-1  Sarah   3         1h30m  109     64          82    +14
-2  Lena    1         30m    95      40          40    -19
+#  PERSON    MEETINGS  TIME   AVG HR  AVG STRESS  PEAK  Δ VS DAY
+1  Mohammed  3         1h30m  109     64          82    +14
+2  Saleh     1         30m    95      40          40    -19
 ```
 
 `Δ VS DAY` is how far a person's meetings sit above your average stress that day — a better
