@@ -66,6 +66,27 @@ func (s *StoreSuite) TestReadMissingDayIsEmpty() {
 	s.Empty(got)
 }
 
+func (s *StoreSuite) TestClearData() {
+	day := time.Date(2026, 6, 29, 9, 0, 0, 0, time.UTC)
+	s.Require().NoError(s.st.AppendSample(model.Sample{Time: day, BPM: 70}))
+	s.Require().NoError(s.st.AppendEvent(model.Event{Time: day, Type: model.EventTag, Label: "x"}))
+
+	s.Require().NoError(s.st.ClearData())
+
+	samples, err := s.st.ReadSamples(day)
+	s.Require().NoError(err)
+	s.Empty(samples)
+	events, err := s.st.ReadEvents(day)
+	s.Require().NoError(err)
+	s.Empty(events)
+
+	// The store stays usable: appends after a wipe still work.
+	s.Require().NoError(s.st.AppendSample(model.Sample{Time: day, BPM: 80}))
+	again, err := s.st.ReadSamples(day)
+	s.Require().NoError(err)
+	s.Len(again, 1)
+}
+
 func (s *StoreSuite) TestEventsFilteredByDate() {
 	day := time.Date(2026, 6, 29, 9, 0, 0, 0, time.UTC)
 	other := time.Date(2026, 6, 28, 9, 0, 0, 0, time.UTC)

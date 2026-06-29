@@ -101,6 +101,23 @@ func readJSONL[T any](path string) ([]T, error) {
 	return out, nil
 }
 
+// ClearData removes all recorded samples and events, leaving config intact.
+func (s *Store) ClearData() error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	samplesDir := filepath.Join(s.dir, "samples")
+	if err := os.RemoveAll(samplesDir); err != nil {
+		return fmt.Errorf("remove samples: %w", err)
+	}
+	if err := os.MkdirAll(samplesDir, 0o755); err != nil {
+		return fmt.Errorf("recreate samples dir: %w", err)
+	}
+	if err := os.Remove(s.eventsPath()); err != nil && !errors.Is(err, fs.ErrNotExist) {
+		return fmt.Errorf("remove events: %w", err)
+	}
+	return nil
+}
+
 // ReadSamples returns all samples recorded on the local date of t, ordered as written.
 func (s *Store) ReadSamples(t time.Time) ([]model.Sample, error) {
 	return readJSONL[model.Sample](s.samplePath(t))
