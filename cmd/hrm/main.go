@@ -1,4 +1,4 @@
-// Command hrm reads live heart rate from a Whoop strap over Bluetooth LE,
+// Command hrm reads live heart rate from a Bluetooth LE heart-rate monitor,
 // computes a stress level, displays it in an interactive terminal UI, and stores
 // the time-series locally for later correlation with meetings and Jira activity.
 package main
@@ -35,7 +35,7 @@ func newRootCmd() *cobra.Command {
 	g := &globals{}
 	root := &cobra.Command{
 		Use:           "hrm",
-		Short:         "Live Whoop heart-rate & stress monitor",
+		Short:         "Live heart-rate & stress monitor for BLE heart-rate straps",
 		SilenceUsage:  true,
 		SilenceErrors: true,
 	}

@@ -61,10 +61,7 @@ func startPipeline(ctx context.Context, cfg config.Config, st *store.Store, log 
 	readings := make(chan ble.Reading, 32)
 	frames := make(chan tui.Frame, 32)
 
-	match := ble.Match{ID: cfg.DeviceID, Name: cfg.DeviceName}
-	if match.ID == "" && match.Name == "" {
-		match.Name = "WHOOP"
-	}
+	match := ble.Match{ID: cfg.DeviceID, Name: cfg.DeviceNameMatch}
 
 	go func() {
 		if err := ble.Monitor(ctx, match, readings, log); err != nil {

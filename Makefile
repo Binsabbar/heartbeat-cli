@@ -1,4 +1,4 @@
-# hrm — Live Whoop heart-rate & stress monitor
+# hrm — Live heart-rate & stress monitor (any BLE heart-rate strap)
 #
 # buildvcs=false is set because the repo is not yet a git checkout; it is
 # harmless once `git init` + first commit exist.

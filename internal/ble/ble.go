@@ -21,9 +21,6 @@ const (
 // Reading re-exports the decoded heart-rate measurement type for callers.
 type Reading = heartrate.Reading
 
-// whoopName is the substring used to recognise a Whoop strap broadcasting HR.
-const whoopName = "WHOOP"
-
 var (
 	adapter    = bluetooth.DefaultAdapter
 	enableOnce sync.Once
@@ -43,7 +40,7 @@ type Device struct {
 }
 
 // Match selects which peripheral to connect to. ID takes precedence; if both are
-// empty, the first Whoop/HR peripheral found is used.
+// empty, the first heart-rate peripheral found is used.
 type Match struct {
 	ID   string
 	Name string
@@ -59,8 +56,8 @@ func (m Match) matches(d Device) bool {
 	return true // no constraint: accept the first candidate
 }
 
-// Scan discovers heart-rate-capable peripherals for up to d. It returns devices
-// that either advertise the Heart Rate service or are named like a Whoop.
+// Scan discovers heart-rate peripherals for up to d. It returns devices that
+// advertise the standard Bluetooth Heart Rate service.
 func Scan(ctx context.Context, d time.Duration) ([]Device, error) {
 	if err := enableAdapter(); err != nil {
 		return nil, fmt.Errorf("enable bluetooth: %w", err)
@@ -78,14 +75,11 @@ func Scan(ctx context.Context, d time.Duration) ([]Device, error) {
 	}()
 
 	err := adapter.Scan(func(_ *bluetooth.Adapter, r bluetooth.ScanResult) {
-		name := r.LocalName()
-		isHR := r.AdvertisementPayload.HasServiceUUID(hrSvc)
-		isWhoop := strings.Contains(strings.ToUpper(name), whoopName)
-		if !isHR && !isWhoop {
+		if !r.AdvertisementPayload.HasServiceUUID(hrSvc) {
 			return
 		}
 		mu.Lock()
-		found[r.Address.String()] = Device{ID: r.Address.String(), Name: name, RSSI: r.RSSI}
+		found[r.Address.String()] = Device{ID: r.Address.String(), Name: r.LocalName(), RSSI: r.RSSI}
 		mu.Unlock()
 	})
 	if err != nil {
@@ -118,12 +112,10 @@ func findAddress(ctx context.Context, m Match, log *slog.Logger) (bluetooth.Addr
 	}()
 
 	err := adapter.Scan(func(_ *bluetooth.Adapter, r bluetooth.ScanResult) {
-		n := r.LocalName()
-		isHR := r.AdvertisementPayload.HasServiceUUID(hrSvc)
-		isWhoop := strings.Contains(strings.ToUpper(n), whoopName)
-		if !isHR && !isWhoop {
+		if !r.AdvertisementPayload.HasServiceUUID(hrSvc) {
 			return
 		}
+		n := r.LocalName()
 		d := Device{ID: r.Address.String(), Name: n, RSSI: r.RSSI}
 		if !m.matches(d) {
 			return

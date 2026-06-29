@@ -1,21 +1,26 @@
-# hrm — Live Whoop Heart-Rate & Stress Monitor
+# hrm — Live Heart-Rate & Stress Monitor
 
-A Go CLI that reads your heart rate **live from your Whoop strap over Bluetooth LE**,
-shows it in an interactive terminal dashboard, computes a **stress level**, flags when
-your stress **changes zone**, and stores the time-series locally so you can correlate
-spikes with meetings and Jira tickets — to learn what triggers you at work.
+A Go CLI that reads your heart rate **live from any standard Bluetooth LE heart-rate
+monitor**, shows it in an interactive terminal dashboard, computes a **stress level**,
+flags when your stress **changes zone**, and stores the time-series locally so you can
+correlate spikes with meetings and Jira tickets — to learn what triggers you at work.
 
-## Why Bluetooth (and not the Whoop API)
+It works with any device exposing the standard BLE Heart Rate service (`0x180D`,
+characteristic `0x2A37`) — a chest strap, an optical arm band, or a WHOOP strap put into
+its **Broadcast Heart Rate** mode.
 
-Whoop's official REST API only exposes **daily** data (recovery, HRV, resting HR, day
-strain) — it has **no continuous/intraday heart rate**. The only way to get live BPM is
-the strap's **"Broadcast Heart Rate"** feature, which makes it advertise as a standard
-BLE Heart Rate Monitor (service `0x180D`, characteristic `0x2A37`). This tool reads that.
+## Why Bluetooth (and not a vendor API)
+
+Many wearable cloud APIs only expose **daily** aggregates (recovery, HRV, resting HR) and
+have **no continuous/intraday heart rate**. Bluetooth LE is the vendor-neutral way to get
+live BPM: any compliant strap advertises the standard Heart Rate service, and this tool
+reads it directly — no account, no cloud, no API keys.
 
 ## Prerequisites
 
-1. **Enable broadcast** on the strap: Whoop app → your device → **Broadcast Heart Rate**.
-   The strap broadcasts to **one** listener at a time, so disconnect other apps.
+1. **Put your strap in broadcast/HR-monitor mode** so it advertises the BLE Heart Rate
+   service. (On a WHOOP strap this is the in-app *Broadcast Heart Rate* toggle.) Most
+   straps broadcast to **one** listener at a time, so disconnect other apps first.
 2. **macOS Bluetooth permission (important).** A command-line tool inherits Bluetooth
    permission from the **terminal app** it runs in. Grant your terminal (Warp / iTerm /
    Terminal) access under **System Settings → Privacy & Security → Bluetooth**, then re-run.
@@ -42,7 +47,7 @@ go build -o hrm ./cmd/hrm    # add -buildvcs=false if building before the first 
 
 ```bash
 hrm devices                  # scan for nearby HR devices
-hrm devices --save WHOOP     # pin your strap to config (match by name or id)
+hrm devices --save <name|id> # pin your strap to config (e.g. --save WHOOP)
 hrm calibrate                # sit still ~2 min to learn your resting HR
 hrm monitor                  # live dashboard (default)
 hrm monitor --print          # stream readings to stdout (debug, no TUI)
@@ -90,8 +95,8 @@ Global flags: `--data-dir`, `--device`, `--resting-hr`, `--max-hr`.
 
 ## Stress model (HR-relative + trend)
 
-There is no Whoop "stress" metric in any feed, so `hrm` computes its own, personalised to
-your heart rate:
+The BLE Heart Rate profile carries no "stress" metric, so `hrm` computes its own,
+personalised to your heart rate:
 
 ```
 ewma  = exponentially-weighted moving average of raw BPM   (suppresses jitter)
@@ -116,7 +121,7 @@ growing JSON array is not:
 ```
 config.json                  # baselines, saved device, stress tuning
 samples/2026-06-29.jsonl     # one HR sample per line, partitioned by local date
-events.jsonl                 # tags, session boundaries, stress changes
+events.jsonl                 # tags (open/close intervals) and stress changes
 hrm.log                      # app log
 ```
 
@@ -136,4 +141,13 @@ without linking the platform Bluetooth stack.
 - Auto-correlate with Google Calendar / `.ics` meetings.
 - Pull Jira activity (issues touched, status changes) around stress spikes.
 - HRV-based stress (RR-intervals are already captured opportunistically when broadcast).
-```
+
+## Disclaimer
+
+This is an independent, unofficial tool. It is **not affiliated with, endorsed by, or
+sponsored by WHOOP, Inc.** or any other wearable vendor. It uses only the open, standard
+Bluetooth LE Heart Rate profile and stores all data locally on your machine. Product names
+are trademarks of their respective owners and are used only to describe compatibility.
+
+Not a medical device — the heart-rate and stress figures are informational only and must
+not be used for any medical or diagnostic purpose.

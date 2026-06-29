@@ -40,11 +40,15 @@ type StressTuning struct {
 
 // Config is the persisted user configuration.
 type Config struct {
-	RestingHR  int          `json:"restingHR"`
-	MaxHR      int          `json:"maxHR"`
-	DeviceID   string       `json:"deviceID,omitempty"`
-	DeviceName string       `json:"deviceName,omitempty"`
-	Stress     StressTuning `json:"stress"`
+	RestingHR  int    `json:"restingHR"`
+	MaxHR      int    `json:"maxHR"`
+	DeviceID   string `json:"deviceID,omitempty"`
+	DeviceName string `json:"deviceName,omitempty"`
+	// DeviceNameMatch optionally restricts auto-connect to peripherals whose
+	// advertised name contains this substring (case-insensitive). Empty means
+	// connect to the first device advertising the standard Heart Rate service.
+	DeviceNameMatch string       `json:"deviceNameMatch,omitempty"`
+	Stress          StressTuning `json:"stress"`
 }
 
 // Default returns a Config populated with sensible defaults.

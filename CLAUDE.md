@@ -6,15 +6,22 @@ conventional commits).
 
 ## What this is
 
-`hrm` — a Go CLI that reads **live heart rate from a Whoop strap over Bluetooth LE**,
+`hrm` — a Go CLI that reads **live heart rate from any standard BLE heart-rate monitor**,
 computes a stress level, shows it in a Bubble Tea TUI, and stores the time-series
 locally so meetings/Jira can be correlated with stress.
 
+## Branding / legal
+
+Vendor-neutral and independent — **not affiliated with WHOOP, Inc. or any wearable
+vendor** (see README disclaimer). Keep it that way: no vendor name in the product name,
+no hardcoded brand strings in code (use the standard HR service for discovery and the
+configurable `DeviceNameMatch`), and only nominative references ("works with …") in docs.
+
 ## Hard constraints (don't relitigate)
 
-- **BLE only, no Whoop API.** Whoop's REST API has *no* continuous heart rate — only
-  daily data. Live BPM comes solely from the strap's BLE "Broadcast Heart Rate" mode
-  (standard HR service `0x180D`, measurement char `0x2A37`). No OAuth anywhere.
+- **BLE only, no vendor cloud API.** Wearable cloud APIs typically expose only daily data,
+  not continuous heart rate. Live BPM comes solely from a strap advertising the standard
+  BLE Heart Rate service (`0x180D`, measurement char `0x2A37`). No OAuth anywhere.
 - **macOS Bluetooth permission is a TCC issue, not a bug.** A CLI inherits Bluetooth
   permission from its terminal app; if denied, macOS kills it with `abort trap: 6`
   (no prompt). Fix is user-side: grant the terminal Bluetooth access or

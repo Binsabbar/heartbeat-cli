@@ -9,8 +9,8 @@
 	<key>CFBundleExecutable</key>
 	<string>hrm</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>hrm reads your live heart rate from your Whoop strap over Bluetooth.</string>
+	<string>hrm reads your live heart rate from a Bluetooth heart-rate monitor.</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>hrm reads your live heart rate from your Whoop strap over Bluetooth.</string>
+	<string>hrm reads your live heart rate from a Bluetooth heart-rate monitor.</string>
 </dict>
 </plist>

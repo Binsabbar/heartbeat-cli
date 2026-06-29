@@ -30,10 +30,7 @@ func newCalibrateCmd(g *globals) *cobra.Command {
 			ctx, cancel := context.WithTimeout(cmd.Context(), dur)
 			defer cancel()
 
-			match := ble.Match{ID: cfg.DeviceID, Name: cfg.DeviceName}
-			if match.ID == "" && match.Name == "" {
-				match.Name = "WHOOP"
-			}
+			match := ble.Match{ID: cfg.DeviceID, Name: cfg.DeviceNameMatch}
 
 			readings := make(chan ble.Reading, 32)
 			go func() {
