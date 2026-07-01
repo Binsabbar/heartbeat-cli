@@ -158,7 +158,8 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m.handleClosing(msg)
 	}
 
-	switch msg.String() {
+	// Accept either case for the single-letter shortcuts (t/T, e/E, q/Q).
+	switch strings.ToLower(msg.String()) {
 	case "q", "ctrl+c":
 		return m, tea.Quit
 	case "t":
